@@ -55,9 +55,11 @@ class account:
         return inbox_emails
 
     def unread(self):
-        self.recieveserver.select()
+        self.recieveserver.select('Inbox')
         fetch_list = self.recieveserver.search(None,'UnSeen')[1][0]
         fetch_list = fetch_list.split(' ')
+        if fetch_list == ['']:
+            return []
         unread_emails = []
         for each_email in fetch_list:
             unread_emails.append(self.get_email(each_email))
