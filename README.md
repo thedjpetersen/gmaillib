@@ -1,7 +1,8 @@
 Python module for GMail
 ===
 
-Simple Python module to interact with Google's mail service GMail. 
+Simple Python module to interact with Google's mail service GMail. The module
+uses Python's included imaplib and smtplib for recieving and sending emails.
 
 Usage
 ---
