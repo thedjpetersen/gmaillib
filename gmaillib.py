@@ -45,7 +45,7 @@ class account:
     def recieve(self):
         return
 
-    def inbox(self):
+    def get_all_messages(self):
         self.recieveserver.select('Inbox')
         fetch_list = self.recieveserver.search(None, '(UNDELETED)')[1][0]
         fetch_list = fetch_list.split(' ')

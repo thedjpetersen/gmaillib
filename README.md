@@ -15,9 +15,13 @@ To initialize an account you do the following
 
     account = gmaillib.account('username', 'password')
 
-To get the entire contents of the inbox
+To get the entire contents of the inbox(**note if you have a large inbox this could take a while**)
 
 	account.get_all_messages()
+
+You can also just get the number of messages in the inbox which is less time consuming.
+	
+	account.get_inbox_count()
 
 To only get the unread messages of the inbox
 
