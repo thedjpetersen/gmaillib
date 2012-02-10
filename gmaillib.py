@@ -72,6 +72,9 @@ class account:
         parsed_email = message(fetched_email)
         return parsed_email
 
+    def _get_uids(self):
+		result, data = self.recieveserver.uid('search', None, "ALL")
+
     def get_inbox_count(self):
         return int(self.recieveserver.select('Inbox')[1][0])
 
