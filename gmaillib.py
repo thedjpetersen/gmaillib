@@ -72,9 +72,16 @@ class account:
         parsed_email = message(fetched_email)
         return parsed_email
 
-    def inbox(self, start=0, end=10):
-        messages_to_fetch = self._get_uids()[start:end]
-        return
+    def inbox(self, start=0, amount=10):
+        self.recieveserver.select('Inbox')
+        inbox_emails = []
+        messages_to_fetch = ','.join(self._get_uids()[start:start+amount])
+        fetch_list = self.recieveserver.uid('fetch', messages_to_fetch,'(RFC822)')
+        for each_email in fetch_list[1]:
+            if(len(each_email) == 1):
+                continue
+            inbox_emails.append(message(each_email[1]))
+        return inbox_emails
 
     def get_inbox_count(self):
         return int(self.recieveserver.select('Inbox')[1][0])
@@ -82,4 +89,6 @@ class account:
     def _get_uids(self):
         self.recieveserver.select('Inbox')
         result, data = self.recieveserver.uid('search', None, 'ALL')
-        return data[0].split(' ').reverse()
+        data = data[0].split(' ')
+        data.reverse()
+        return data
