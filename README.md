@@ -32,3 +32,8 @@ To send an email
 	account.send(target, subject, message)
 
 Note that the subject and message are optional.
+
+Credits
+===
+
+A large part of this library is implementing this excellent blogpost: http://yuji.wordpress.com/2011/06/22/python-imaplib-imap-example-with-gmail/
