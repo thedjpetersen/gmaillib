@@ -15,6 +15,16 @@ To initialize an account you do the following
 
     account = gmaillib.account('username', 'password')
 
+To get messages from the inbox just call the use the inbox method
+
+    account.inbox()
+
+To get a range of messages just give the place to start from and how many to fetch
+
+    account.inbox(start=10, amount=100)
+
+This will fetch the 10th to the 110th message
+
 To get the entire contents of the inbox(**note if you have a large inbox this could take a while**)
 
 	account.get_all_messages()
