@@ -19,6 +19,9 @@ class message:
             if parsed.get_content_type() in accepted_types:
                 self.body = parsed.get_payload()
 
+    def __repr__(self):
+        return "<Msg from: {0}>".format(self.sender_addr)
+
 class account:
     def __init__(self, username, password):
         self.username = username
