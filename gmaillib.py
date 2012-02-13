@@ -22,6 +22,9 @@ class message:
     def __repr__(self):
         return "<Msg from: {0}>".format(self.sender_addr)
 
+    def __str__(self):
+        return "To: {0}\nFrom: {1}\nDate: {2}\nSubject: {3}\n\n{4}".format(self.reciever_addr, self.sender_addr, self.date, self.subject, self.body)
+
 class account:
     def __init__(self, username, password):
         self.username = username
