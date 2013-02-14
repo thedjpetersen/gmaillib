@@ -48,8 +48,11 @@ To fetch emails with gmail search syntax. Added support for gmails web search sy
 
 	account.filter('from:foo@bar.com')
 
-Note that, the mailbox selection is set to Inbox(default). 
-https://github.com/shredder12/gmaillib/blob/master/gmaillib.py#L65
+Note that, the mailbox selection is set to Inbox(default). https://github.com/shredder12/gmaillib/blob/master/gmaillib.py#L65
+
+Download messages by using download_attachment()
+    
+    message.download_attachment(location)
 
 Credits
 ===
