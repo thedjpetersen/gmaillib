@@ -29,6 +29,9 @@ class message:
             self.receiver_addr, self.sender_addr, self.date, self.subject, self.body)
 
     def download_attachment(self, dest_dir):
+        '''
+        Courtsey of http://stackoverflow.com/questions/348630/how-can-i-download-all-emails-with-attachments-from-gmail
+        '''
         mail = self.parsed_email
         if mail.get_content_maintype() != 'multipart':
             return "no attachment"
