@@ -41,6 +41,10 @@ To send an email
 
 	account.send(target, subject, message)
 
+To fetch emails with gmail search syntax(NOTE: partially supported)
+
+	account.filter('from:foo@bar.com')
+
 Note that the subject and message are optional.
 
 Credits
