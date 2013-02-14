@@ -41,11 +41,15 @@ To send an email
 
 	account.send(target, subject, message)
 
-To fetch emails with gmail search syntax(NOTE: partially supported)
+Note that the subject and message are optional.
+
+
+To fetch emails with gmail search syntax. Added support for gmails web search syntax using X-GM-RAW. 
 
 	account.filter('from:foo@bar.com')
 
-Note that the subject and message are optional.
+Note that, the mailbox selection is set to Inbox(default). 
+https://github.com/shredder12/gmaillib/blob/master/gmaillib.py#L65
 
 Credits
 ===
