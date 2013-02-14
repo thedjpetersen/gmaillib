@@ -61,39 +61,13 @@ class account:
         @return list of emails matching the search criteria
         
         '''
+        
+        # NOTE: Gmail's advanced search is limited by the mail box selection
+        # irrespective of what we include in the search string.
+        # e.g. label:anywhere will return Inbox results only.
 
-        options = {
-        'from': 'FROM',
-        'to' : 'TO'
-        }
-
-        options_label = {
-        'label:unread' : 'UNSEEN'
-        }
-
-        for attrs in options_label.items():
-            if search_string.find(attrs[0]) != -1:
-                search_string = search_string.replace(attrs[0], attrs[1])
- 
-        str_arr = search_string.split(':')
-        for attrs in options.items():
-            if attrs[0] in str_arr:
-                indx = str_arr.index(attrs[0])
-                str_arr[indx] = attrs[1]
-                str_arr.insert(indx + 1, " '")
-                if (indx + 3) == len(str_arr):
-                    str_arr.insert(indx + 3, "'")
-                else:
-                    str_arr.insert(indx + 3, "' ")
-                str_arr.insert(0, '(')
-                str_arr.append(')')
-
-        search_string = ''.join(str_arr)
-
-        # TODO: Default mailbox is Inbox. Integrate "in:" options to allow mailbox
-
-        self.receiveserver.select('Inbox')
-        fetch_str = self.receiveserver.search(None, search_string)[1][0]
+        self.receiveserver.select("Inbox")
+        fetch_str = self.receiveserver.uid('SEARCH', None, 'X-GM-RAW', search_string)[1][0]
         fetch_list = fetch_str.split(' ')
         emails = []
         for email_index in fetch_list:
