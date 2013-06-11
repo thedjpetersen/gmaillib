@@ -48,7 +48,7 @@ class message:
             filename = part.get_filename()
             counter = 1
 
-           if not filename:
+            if not filename:
                 filename = 'part-%03d%s' % (counter, 'bin')
                 counter += 1
 
