@@ -3,6 +3,17 @@ import smtplib
 import email
 import os
 
+#THE MESSAGE CLASS
+
+#PROPERTIES OF A MESSAGE:
+
+#1. parsed_email
+#2. reciever_addr -- email address of the reciever
+#3. sender_addr -- email address of the sender
+#4. date -- date that the message was sent
+#5. subject -- subject of the email
+#6. body -- content of the email
+
 class message:
     def __init__(self, fetched_email):
         accepted_types = ['text/plain']
@@ -58,6 +69,18 @@ class message:
                 fp = open(att_path, 'wb')
                 fp.write(part.get_payload(decode=True))
                 fp.close()
+                
+#THE ACCOUNT CLASS
+
+#THE PROPERTIED OF THE ACOUNT CLASS
+
+#1. username -- username of the account
+#2. password -- password associated with the account
+
+
+#clarification reqd on the following two items:
+#3. sendserver
+#4. receiveserver
 
 class account:
     def __init__(self, username, password):
