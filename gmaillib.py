@@ -94,6 +94,11 @@ class account:
         self.receiveserver = imaplib.IMAP4_SSL('imap.gmail.com', 993)
         self.receiveserver.login(username,password)
 
+    def exit_server(self):
+        self.sendserver.quit()
+        self.receiveserver.close()
+        self.receiveserver.logout()
+
     def send(self, toaddr, subject='', msg=''):
         fromaddr = self.username
 
