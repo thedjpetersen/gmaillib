@@ -80,7 +80,7 @@ class message:
 
 #clarification reqd on the following two items:
 #3. sendserver
-#4. receiveserver 
+#4. receiveserver
 
 class account:
     def __init__(self, username, password):
