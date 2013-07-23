@@ -3,6 +3,17 @@ import smtplib
 import email
 import os
 
+#THE MESSAGE CLASS
+
+#PROPERTIES OF A MESSAGE:
+
+#1. parsed_email
+#2. reciever_addr -- email address of the reciever
+#3. sender_addr -- email address of the sender
+#4. date -- date that the message was sent
+#5. subject -- subject of the email
+#6. body -- content of the email
+
 class message:
     def __init__(self, fetched_email):
         accepted_types = ['text/plain']
