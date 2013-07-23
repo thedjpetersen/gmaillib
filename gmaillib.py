@@ -70,6 +70,19 @@ class message:
                 fp.write(part.get_payload(decode=True))
                 fp.close()
 
+                
+#THE ACCOUNT CLASS
+
+#THE PROPERTIED OF THE ACOUNT CLASS
+
+#1. username -- username of the account
+#2. password -- password associated with the account
+
+
+#clarification reqd on the following two items:
+#3. sendserver
+#4. receiveserver 
+
 class account:
     def __init__(self, username, password):
         self.username = username
