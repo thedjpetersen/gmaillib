@@ -69,7 +69,6 @@ class message:
                 fp = open(att_path, 'wb')
                 fp.write(part.get_payload(decode=True))
                 fp.close()
-
                 
 #THE ACCOUNT CLASS
 
