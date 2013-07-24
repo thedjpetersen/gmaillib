@@ -6,6 +6,8 @@ uses Python's included imaplib and smtplib for recieving and sending emails.
 
 The goal of this module is to provide a simple direct interface to GMail.
 
+This repo includes the Windows installer.(.exe)
+
 Usage
 ---
 
