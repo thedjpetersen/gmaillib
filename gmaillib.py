@@ -162,6 +162,12 @@ class account:
         fetched_email = self.receiveserver.fetch(email_id, "(RFC822)")[1][0][1]
         parsed_email = message(fetched_email)
         return parsed_email
+    
+    def create_mailbox(self,mailbox):
+        self.receiveserver.create(mailbox)
+
+    def append(self,mailbox, flags, date_time, message):
+        self.receiveserver.append(mailbox, flags, date_time, message)
 
     def inbox(self, start=0, amount=10):
         self.receiveserver.select('Inbox')
