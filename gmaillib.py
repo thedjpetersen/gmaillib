@@ -15,10 +15,11 @@ import os
 #6. body -- content of the email
 
 class message:
-    def __init__(self, fetched_email):
+    def __init__(self, fetched_email, email_id):
         accepted_types = ['text/plain']
         parsed = email.message_from_string(fetched_email)
-        self.parsed_email = email.message_from_string(fetched_email)
+        self.uid = email_id
+	self.parsed_email = email.message_from_string(fetched_email)
         self.receiver_addr = parsed['to']
         self.sender_addr = parsed['from']
         self.date = parsed['date']
@@ -160,7 +161,7 @@ class account:
         self.receiveserver.select('Inbox')
         #This nasty syntax fetches the email as a string
         fetched_email = self.receiveserver.fetch(email_id, "(RFC822)")[1][0][1]
-        parsed_email = message(fetched_email)
+        parsed_email = message(fetched_email, email_id)
         return parsed_email
     
     def create_mailbox(self,mailbox):
