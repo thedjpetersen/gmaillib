@@ -39,6 +39,14 @@ To only get the unread messages of the inbox
 
 	account.unread();
 
+To get messages from the sent just call the use the sent method
+
+	account.sent()
+
+To get a range of messages just give the place to start from and how many to fetch
+	
+	account.sent(start=10, amount=100)	
+
 To send an email
 
 	account.send(target, subject, message)

@@ -53,7 +53,7 @@ class message:
         for part in mail.walk():
             if part.get_content_maintype() == 'multipart':
                 continue
- 
+
             if part.get('Content-Disposition') is None:
                 continue
 
@@ -70,7 +70,7 @@ class message:
                 fp = open(att_path, 'wb')
                 fp.write(part.get_payload(decode=True))
                 fp.close()
-                
+
 #THE ACCOUNT CLASS
 
 #THE PROPERTIED OF THE ACOUNT CLASS
@@ -122,9 +122,9 @@ class account:
         @param search_string: GMail style search string
 
         @return list of email matching the search criteria
-        
+
         '''
-        
+
         # NOTE: Gmail's advanced search is limited by the mail box selection
         # irrespective of what we include in the search string.
         # e.g. label:anywhere will return Inbox results only.
@@ -181,12 +181,30 @@ class account:
             inbox_emails.append(message(each_email[1]))
         return inbox_emails
 
-    def get_inbox_count(self):
-        return int(self.receiveserver.select('Inbox')[1][0])
+    def sent(self, start=0, amount=10):
+        self.receiveserver.select('[Gmail]/Sent Mail')
+        sent_emails = []
+        messages_to_fetch = ','.join(self._get_uids(folder='[Gmail]/Sent Mail')[start:start+amount])
+        fetch_list = self.receiveserver.uid('fetch', messages_to_fetch,'(RFC822)')
+        for each_email in fetch_list[1]:
+            if(len(each_email) == 1):
+                continue
+            sent_emails.append(message(each_email[1]))
+        return sent_emails
 
-    def _get_uids(self):
-        self.receiveserver.select('Inbox')
+    def get_inbox_count(self):
+        return self.get_count('inbox')
+
+    def get_count(self,folder='inbox'):
+        return int(self.receiveserver.select(folder)[1][0])
+
+    def _get_uids(self,folder='inbox'):
+        self.receiveserver.select(folder)
         result, data = self.receiveserver.uid('search', None, 'ALL')
         data = data[0].split(' ')
         data.reverse()
         return data
+
+    def get_folders(self):
+        response,folders = self.receiveserver.list()
+        return folders
