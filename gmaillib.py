@@ -15,8 +15,9 @@ import os
 #6. body -- content of the email
 
 class message:
-    def __init__(self, fetched_email):
-        accepted_types = ['text/plain']
+    def __init__(self, fetched_email, *args, **kwargs):
+        
+        accepted_types = kwargs.get('types', ['text/plain'])
         parsed = email.message_from_string(fetched_email)
         self.parsed_email = email.message_from_string(fetched_email)
         self.receiver_addr = parsed['to']
