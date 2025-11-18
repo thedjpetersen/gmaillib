@@ -1,87 +1,410 @@
-Python module for GMail
-===
+# Python Gmail Library
 
-Simple Python module to interact with Google's mail service GMail. The module
-uses Python's included imaplib and smtplib for recieving and sending emails.
+A modern Python 3 library for interacting with Gmail using IMAP and SMTP protocols.
 
-The goal of this module is to provide a simple direct interface to GMail.
+## Features
 
-This repo includes the Windows installer.(.exe)
+- **Python 3.8+** - Fully modernized for Python 3
+- **Type hints** - Complete type annotations for better IDE support
+- **OAuth2 support** - Secure authentication using OAuth2 tokens
+- **Context managers** - Automatic resource cleanup
+- **Error handling** - Specific exceptions for different error types
+- **Modern email API** - Uses the latest email.policy for better RFC compliance
+- **Gmail search** - Support for Gmail's advanced search syntax
 
-Usage
----
+## Installation
 
-To initialize an account you do the following
+### Using pip (recommended)
 
-    import gmaillib
+```bash
+pip install gmaillib
+```
 
-    account = gmaillib.account('username', 'password')
+### From source
 
-To get messages from the inbox just call the use the inbox method
+```bash
+git clone https://github.com/thedjpetersen/gmaillib.git
+cd gmaillib
+pip install -e .
+```
 
-    account.inbox()
+## Quick Start
 
-To get a range of messages just give the place to start from and how many to fetch
+### Basic Authentication (Password)
 
-    account.inbox(start=10, amount=100)
+```python
+import gmaillib
 
-This will fetch the 10th to the 110th message
+# Initialize account with password
+account = gmaillib.Account('your-email@gmail.com', password='your-password')
 
-To get the entire contents of the inbox(**note if you have a large inbox this could take a while**)
+# Get inbox messages
+messages = account.inbox()
+for msg in messages:
+    print(f"From: {msg.sender_addr}")
+    print(f"Subject: {msg.subject}")
 
-	account.get_all_messages()
+# Clean up
+account.exit_server()
+```
 
-You can also just get the number of messages in the inbox which is less time consuming.
-	
-	account.get_inbox_count()
+### Using Context Managers (Recommended)
 
-To only get the unread messages of the inbox
+```python
+import gmaillib
 
-	account.unread();
+# Automatic cleanup with context manager
+with gmaillib.Account('your-email@gmail.com', password='your-password') as account:
+    messages = account.inbox()
+    for msg in messages:
+        print(f"From: {msg.sender_addr}")
+```
 
-To send an email
+### OAuth2 Authentication (Recommended for Production)
 
-	account.send(target, subject, message)
+```python
+import gmaillib
 
-Note that the subject and message are optional.
+# Initialize with OAuth2 token
+account = gmaillib.Account(
+    'your-email@gmail.com',
+    oauth2_token='your-oauth2-access-token'
+)
 
+messages = account.unread()
+account.exit_server()
+```
 
-To fetch emails with gmail search syntax. Added support for gmails web search syntax using X-GM-RAW. 
+## Usage Examples
 
-	account.filter('from:foo@bar.com')
+### Reading Emails
 
-Note that, the mailbox selection is set to Inbox(default). https://github.com/shredder12/gmaillib/blob/master/gmaillib.py#L65
+#### Get a range of messages
 
-Download messages by using download_attachment()
-    
-    message.download_attachment(location)
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    # Get 10 messages starting from position 0
+    messages = account.inbox(start=0, amount=10)
 
-Credits
-===
+    # Get next 10 messages
+    messages = account.inbox(start=10, amount=10)
+```
 
-A large part of this library is implementing this excellent blogpost: http://yuji.wordpress.com/2011/06/22/python-imaplib-imap-example-with-gmail/
+#### Get all unread messages
 
-License
-===
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    unread = account.unread()
+    print(f"You have {len(unread)} unread messages")
+```
 
-The MIT License (MIT)
+#### Get inbox count
 
-Copyright (c) 2013 David Petersen
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    count = account.get_inbox_count()
+    print(f"Total messages: {count}")
+```
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+#### Get all messages (warning: may be slow for large inboxes)
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    all_messages = account.get_all_messages()
+```
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+### Searching Emails
+
+Use Gmail's advanced search syntax:
+
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    # Search by sender
+    messages = account.filter('from:someone@example.com')
+
+    # Search by subject
+    messages = account.filter('subject:important')
+
+    # Complex search
+    messages = account.filter('from:boss@company.com subject:urgent after:2024/01/01')
+
+    # Search with labels
+    messages = account.filter('label:work is:unread')
+```
+
+### Sending Emails
+
+#### Send plain text email
+
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    account.send(
+        toaddr='recipient@example.com',
+        subject='Hello',
+        msg='This is a plain text message'
+    )
+```
+
+#### Send HTML email
+
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    html_content = '''
+    <html>
+        <body>
+            <h1>Hello!</h1>
+            <p>This is an <strong>HTML</strong> email.</p>
+        </body>
+    </html>
+    '''
+    account.send(
+        toaddr='recipient@example.com',
+        subject='HTML Email',
+        msg=html_content,
+        html=True
+    )
+```
+
+### Working with Attachments
+
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    messages = account.inbox(amount=5)
+
+    for msg in messages:
+        # Download attachments to a directory
+        result = msg.download_attachment('/path/to/save/directory')
+        print(result)
+```
+
+### Working with Message Content
+
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    messages = account.inbox(amount=1)
+    msg = messages[0]
+
+    # Access message properties
+    print(f"From: {msg.sender_addr}")
+    print(f"To: {msg.receiver_addr}")
+    print(f"Date: {msg.date}")
+    print(f"Subject: {msg.subject}")
+    print(f"Body: {msg.body}")
+
+    # Get HTML content
+    html_messages = gmaillib.Message(msg.parsed_email, types=['text/html'])
+    print(html_messages.body)
+```
+
+### Error Handling
+
+```python
+import gmaillib
+from gmaillib import AuthenticationError, ConnectionError, MessageError
+
+try:
+    with gmaillib.Account('email@gmail.com', password='wrong-password') as account:
+        messages = account.inbox()
+except AuthenticationError as e:
+    print(f"Authentication failed: {e}")
+except ConnectionError as e:
+    print(f"Connection failed: {e}")
+except MessageError as e:
+    print(f"Message operation failed: {e}")
+```
+
+### Advanced: Managing Mailboxes
+
+```python
+with gmaillib.Account('email@gmail.com', password='pass') as account:
+    # Create a new mailbox/label
+    account.create_mailbox('MyNewLabel')
+
+    # Append a message to a mailbox
+    account.append(
+        mailbox='MyNewLabel',
+        flags='\\Seen',
+        date_time=None,
+        message='email content here'
+    )
+```
+
+## API Reference
+
+### Account Class
+
+#### `Account(username, password=None, oauth2_token=None)`
+
+Initialize a Gmail account connection.
+
+**Parameters:**
+- `username` (str): Gmail email address
+- `password` (str, optional): Account password for basic auth
+- `oauth2_token` (str, optional): OAuth2 access token (recommended)
+
+**Raises:**
+- `AuthenticationError`: If authentication fails
+- `ConnectionError`: If connection to Gmail servers fails
+
+#### Methods
+
+- `inbox(start=0, amount=10)` - Get a range of inbox messages
+- `unread()` - Get all unread messages
+- `get_all_messages()` - Get all inbox messages
+- `get_inbox_count()` - Get total number of inbox messages
+- `send(toaddr, subject='', msg='', html=False)` - Send an email
+- `filter(search_string)` - Search emails using Gmail syntax
+- `create_mailbox(mailbox)` - Create a new mailbox/label
+- `append(mailbox, flags, date_time, message)` - Append message to mailbox
+- `exit_server()` - Close all connections
+
+### Message Class
+
+#### `Message(fetched_email, **kwargs)`
+
+Represents an email message.
+
+**Parameters:**
+- `fetched_email` (str or bytes): Raw email data
+- `types` (list, optional): Acceptable content types (default: ['text/plain'])
+
+#### Attributes
+
+- `parsed_email` - The parsed email message object
+- `receiver_addr` - Email address of the receiver
+- `sender_addr` - Email address of the sender
+- `date` - Date the message was sent
+- `subject` - Subject of the email
+- `body` - Content of the email
+
+#### Methods
+
+- `download_attachment(dest_dir)` - Download attachments to directory
+
+## Migration from Old Version
+
+If you're upgrading from the Python 2 version, here are the key changes:
+
+### Code Changes
+
+```python
+# Old (Python 2)
+import gmaillib
+account = gmaillib.account('email', 'pass')  # lowercase 'account'
+
+# New (Python 3)
+import gmaillib
+account = gmaillib.Account('email', password='pass')  # capitalized, keyword args
+```
+
+### Backwards Compatibility
+
+For minimal code changes, lowercase aliases are available:
+
+```python
+import gmaillib
+account = gmaillib.account('email', 'pass')  # Still works!
+msg = gmaillib.message(email_data)  # Still works!
+```
+
+### Major Improvements
+
+1. **Print statements** → `print()` functions
+2. **String handling** - Proper bytes/str handling for Python 3
+3. **Email parsing** - Uses modern `email.policy.default`
+4. **Context managers** - Use `with` statements for auto cleanup
+5. **Type hints** - Better IDE support and code documentation
+6. **OAuth2** - Secure authentication support
+7. **Error handling** - Specific exception types
+
+## Requirements
+
+- Python 3.8 or higher
+- No external dependencies (uses stdlib only)
+
+## Security Notes
+
+### App Passwords
+
+If using password authentication with 2FA enabled, you'll need to generate an [App Password](https://support.google.com/accounts/answer/185833):
+
+1. Go to your Google Account
+2. Select Security
+3. Under "Signing in to Google," select App Passwords
+4. Generate a new app password for "Mail"
+5. Use this password instead of your regular password
+
+### OAuth2 (Recommended)
+
+For production applications, use OAuth2 authentication:
+
+1. Set up a project in [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the Gmail API
+3. Create OAuth2 credentials
+4. Get an access token
+5. Pass the token to `Account(oauth2_token=...)`
+
+## Development
+
+### Running Tests
+
+```bash
+# Install dev dependencies
+pip install -e ".[dev]"
+
+# Run tests
+pytest
+
+# Run with coverage
+pytest --cov=gmaillib
+```
+
+### Code Quality
+
+```bash
+# Format code
+black gmaillib.py
+
+# Lint code
+ruff check gmaillib.py
+
+# Type checking
+mypy gmaillib.py
+```
+
+## License
+
+MIT License - Copyright (c) 2013-2024 David Petersen
+
+See LICENSE file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Credits
+
+- Original library by David Petersen
+- Inspired by [this excellent blog post](http://yuji.wordpress.com/2011/06/22/python-imaplib-imap-example-with-gmail/)
+- Contributors: See GitHub contributors page
+
+## Changelog
+
+### Version 1.0.0 (2024)
+
+- **Breaking**: Python 3.8+ required (dropped Python 2 support)
+- **New**: OAuth2 authentication support
+- **New**: Context manager support
+- **New**: Type hints throughout
+- **New**: Specific exception types
+- **Improved**: Modern email parsing with email.policy
+- **Improved**: Better bytes/string handling
+- **Improved**: HTML email support in send()
+- **Improved**: Better error messages
+- **Fixed**: All Python 3 compatibility issues
+
+### Version 0.0.0 (2013)
+
+- Initial release
+- Python 2 support
+- Basic IMAP/SMTP functionality
